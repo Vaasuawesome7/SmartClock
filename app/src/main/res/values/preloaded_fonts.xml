@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/amarante</item>
+        <item>@font/anonymous_pro</item>
+        <item>@font/antic</item>
+        <item>@font/baumans</item>
+        <item>@font/bitter</item>
+        <item>@font/bungee_inline</item>
+        <item>@font/delius</item>
+        <item>@font/germania_one</item>
+        <item>@font/happy_monkey</item>
+        <item>@font/kalam_light</item>
+        <item>@font/luckiest_guy</item>
+    </array>
+</resources>
