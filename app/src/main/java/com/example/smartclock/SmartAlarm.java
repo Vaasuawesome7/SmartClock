@@ -30,7 +30,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlarmListener, TimePickerDialog.OnTimeSetListener {
+public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     private SoundPool mSoundPool;
     private int mInteract;
@@ -62,9 +62,20 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
         mAlarmList = new ArrayList<>();
         mSwitchStates = new ArrayList<>();
         loadData();
+        Toast.makeText(this, "created", Toast.LENGTH_SHORT).show();
         adapter = new AlarmAdapter(mAlarmList, mSwitchStates);
         mAlarmView.setLayoutManager(new LinearLayoutManager(this));
         mAlarmView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new AlarmAdapter.OnItemClickListener() {
+            @Override
+            public void onDeleteClick(int pos) {
+                mAlarmList.remove(pos);
+                mSwitchStates.remove(pos);
+                adapter.notifyItemRemoved(pos);
+                Toast.makeText(SmartAlarm.this, "setted", Toast.LENGTH_SHORT).show();
+                saveData();
+            }
+        });
     }
 
     private void setSoundPool() {
@@ -114,11 +125,6 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
         });
     }
 
-    @Override
-    public void onAlarmClick(int pos) {
-
-    }
-
     public void addAlarm(View view) {
         DialogFragment timePicker = new TimePickerFragment();
         timePicker.show(getSupportFragmentManager(), "time picker");
@@ -137,10 +143,7 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
         mAlarmList.add(time);
         mSwitchStates.add(false);
         System.out.println(time);
-        adapter = new AlarmAdapter(mAlarmList, mSwitchStates);
         adapter.notifyDataSetChanged();
-        mAlarmView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mAlarmView.setAdapter(adapter);
         saveData();
     }
 
@@ -154,7 +157,6 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
         editor.putString(SHARED_PREF_STRING, json);
         editor.putString(SHARED_PREF_SWITCH, json1);
         editor.apply();
-        loadData();
     }
 
     public void loadData() {
