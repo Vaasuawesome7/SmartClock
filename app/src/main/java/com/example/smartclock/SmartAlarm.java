@@ -7,8 +7,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -22,18 +24,25 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlarmListener, TimePickerDialog.OnTimeSetListener {
 
     private SoundPool mSoundPool;
     private int mInteract;
-    private ArrayList<String> mAlarmList;
+    private ArrayList<String> mAlarmList = new ArrayList<>();
     private AlarmAdapter adapter;
     private RecyclerView mAlarmView;
-    private TextView decoy;
     private String time;
+    private ArrayList<Boolean> mSwitchStates = new ArrayList<>();
+
+    private final String SHARED_PREFERENCES = "sharedPrefs";
+    private final String SHARED_PREF_STRING = "alarm";
+    private final String SHARED_PREF_SWITCH = "switch";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +51,6 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
         mAlarmView = findViewById(R.id.alarm_view);
         time = "";
         fun1();
-
-        decoy = findViewById(R.id.decoy);
         ActionBar actionBar = getSupportActionBar();
         ColorDrawable colorDrawable
                 = new ColorDrawable(getResources().getColor(R.color.colorAlarm));
@@ -53,6 +60,11 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
 
         setSoundPool();
         mAlarmList = new ArrayList<>();
+        mSwitchStates = new ArrayList<>();
+        loadData();
+        adapter = new AlarmAdapter(mAlarmList, mSwitchStates);
+        mAlarmView.setLayoutManager(new LinearLayoutManager(this));
+        mAlarmView.setAdapter(adapter);
     }
 
     private void setSoundPool() {
@@ -85,11 +97,13 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
                     case R.id.stopwatch: {
                         startActivity(new Intent(getApplicationContext(), SmartStopwatch.class));
                         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                        finish();
                         return true;
                     }
                     case R.id.timer: {
                         startActivity(new Intent(getApplicationContext(), SmartTimer.class));
                         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                        finish();
                         return true;
                     }
                     case R.id.alarm:
@@ -109,7 +123,6 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
         DialogFragment timePicker = new TimePickerFragment();
         timePicker.show(getSupportFragmentManager(), "time picker");
 
-
     }
 
     @Override
@@ -122,10 +135,40 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
         System.out.println("first");
         System.out.println("second");
         mAlarmList.add(time);
+        mSwitchStates.add(false);
         System.out.println(time);
-        adapter = new AlarmAdapter(mAlarmList);
+        adapter = new AlarmAdapter(mAlarmList, mSwitchStates);
         adapter.notifyDataSetChanged();
         mAlarmView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mAlarmView.setAdapter(adapter);
+        saveData();
+    }
+
+    public void saveData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(mAlarmList);
+        String json1 = gson.toJson(mSwitchStates);
+        editor.putString(SHARED_PREF_STRING, json);
+        editor.putString(SHARED_PREF_SWITCH, json1);
+        editor.apply();
+        loadData();
+    }
+
+    public void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(SHARED_PREF_STRING, null);
+        String json1 = sharedPreferences.getString(SHARED_PREF_SWITCH, null);
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        Type type1 = new TypeToken<ArrayList<Boolean>>() {}.getType();
+        mAlarmList = gson.fromJson(json, type);
+        mSwitchStates = gson.fromJson(json1, type1);
+        if (mAlarmList == null)
+            mAlarmList = new ArrayList<>();
+        if (mSwitchStates == null)
+            mSwitchStates = new ArrayList<>();
     }
 }
