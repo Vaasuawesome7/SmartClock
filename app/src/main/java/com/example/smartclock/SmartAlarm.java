@@ -60,7 +60,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         mAlarmList = new ArrayList<>();
         mSwitchStates = new ArrayList<>();
         loadData();
-        adapter = new AlarmAdapter(mAlarmList, mSwitchStates, getApplicationContext());
+        adapter = new AlarmAdapter(mAlarmList, mSwitchStates);
         mAlarmView.setLayoutManager(new LinearLayoutManager(this));
         mAlarmView.setAdapter(adapter);
         adapter.setOnItemClickListener(new AlarmAdapter.OnItemClickListener() {

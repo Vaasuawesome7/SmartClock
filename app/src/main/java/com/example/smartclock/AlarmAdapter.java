@@ -19,7 +19,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     private ArrayList<String> mAlarmList;
     private ArrayList<Boolean> mSwitchStates;
     private OnItemClickListener mListener;
-    private Context context;
 
     public interface OnItemClickListener{
         void onDeleteClick(int pos);
@@ -30,10 +29,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         this.mListener = listener;
     }
 
-    public AlarmAdapter(ArrayList<String> list, ArrayList<Boolean> switchStates, Context context) {
+    public AlarmAdapter(ArrayList<String> list, ArrayList<Boolean> switchStates) {
         this.mAlarmList = list;
         this.mSwitchStates = switchStates;
-        this.context = context;
     }
 
     @NonNull
