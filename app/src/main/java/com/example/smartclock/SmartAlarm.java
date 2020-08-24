@@ -96,7 +96,8 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                 mAlarmList.remove(pos);
                 mSwitchStates.remove(pos);
                 adapter.notifyItemRemoved(pos);
-                stopAlarm(pos);
+                if (mSwitchStates.get(pos))
+                    stopAlarm(pos);
                 saveData();
             }
 
@@ -110,6 +111,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                 }
                 else {
                     stopAlarm(pos);
+                    mSwitchStates.set(pos, false);
                 }
                 saveData();
             }
