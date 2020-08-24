@@ -15,10 +15,13 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+
 public class SmartAlarm extends AppCompatActivity {
 
     private SoundPool mSoundPool;
     private int mInteract;
+    private ArrayList<String> mAlarmList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class SmartAlarm extends AppCompatActivity {
         actionBar.setTitle("Alarm");
 
         setSoundPool();
-
+        mAlarmList = new ArrayList<>();
     }
 
     private void setSoundPool() {
