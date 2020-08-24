@@ -7,7 +7,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -27,6 +30,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
@@ -34,13 +38,14 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
     private int mInteract;
     private ArrayList<String> mAlarmList = new ArrayList<>();
     private AlarmAdapter adapter;
-    private RecyclerView mAlarmView;
     private String time;
     private ArrayList<Boolean> mSwitchStates = new ArrayList<>();
+    private RecyclerView mAlarmView;
 
     private final String SHARED_PREFERENCES = "sharedPrefs";
     private final String SHARED_PREF_STRING = "alarm";
     private final String SHARED_PREF_SWITCH = "switch";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,28 +65,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         mAlarmList = new ArrayList<>();
         mSwitchStates = new ArrayList<>();
         loadData();
-        adapter = new AlarmAdapter(mAlarmList, mSwitchStates);
-        mAlarmView.setLayoutManager(new LinearLayoutManager(this));
-        mAlarmView.setAdapter(adapter);
-        adapter.setOnItemClickListener(new AlarmAdapter.OnItemClickListener() {
-            @Override
-            public void onDeleteClick(int pos) {
-                mAlarmList.remove(pos);
-                mSwitchStates.remove(pos);
-                adapter.notifyItemRemoved(pos);
-                saveData();
-            }
-
-            @Override
-            public void onSwitchClick(int pos) {
-                mSwitchStates.set(pos, !mSwitchStates.get(pos));
-                for (Boolean bool : mSwitchStates){
-                    System.out.println(bool);
-                }
-                adapter.notifyItemChanged(pos);
-                saveData();
-            }
-        });
+        onClickListeners();
     }
 
     private void setSoundPool() {
@@ -100,6 +84,36 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         }
 
         mInteract = mSoundPool.load(this, R.raw.button, 1);
+    }
+
+    private void onClickListeners() {
+        adapter = new AlarmAdapter(mAlarmList, mSwitchStates);
+        mAlarmView.setLayoutManager(new LinearLayoutManager(this));
+        mAlarmView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new AlarmAdapter.OnItemClickListener() {
+            @Override
+            public void onDeleteClick(int pos) {
+                mAlarmList.remove(pos);
+                mSwitchStates.remove(pos);
+                adapter.notifyItemRemoved(pos);
+                stopAlarm(pos);
+                saveData();
+            }
+
+            @Override
+            public void onSwitchClick(int pos) {
+                mSwitchStates.set(pos, !mSwitchStates.get(pos));
+                adapter.notifyItemChanged(pos);
+                boolean val = mSwitchStates.get(pos);
+                if (val) {
+                    startAlarm(pos);
+                }
+                else {
+                    stopAlarm(pos);
+                }
+                saveData();
+            }
+        });
     }
 
 
@@ -178,5 +192,40 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
             mAlarmList = new ArrayList<>();
         if (mSwitchStates == null)
             mSwitchStates = new ArrayList<>();
+    }
+
+    public void startAlarm(int pos) {
+
+        Calendar c = Calendar.getInstance();
+        String time = mAlarmList.get(pos);
+        int h = Integer.parseInt(time.substring(0,2));
+        int m = Integer.parseInt(time.substring(3));
+        c.set(Calendar.HOUR_OF_DAY, h);
+        c.set(Calendar.MINUTE, m);
+        c.set(Calendar.SECOND, 0);
+
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(this, AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), pos, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        String alarmString = h + ":" + m;
+        if (h<10)
+            alarmString = "0" + h + ":" + m;
+        if (m<10)
+            alarmString =  h + ":0" + m;
+
+        if (c.before(Calendar.getInstance())) {
+            c.add(Calendar.DATE, 1);
+            Toast.makeText(this, "Alarm will ring tomorrow at " + alarmString, Toast.LENGTH_SHORT).show();
+        }
+        Toast.makeText(this, "Alarm set at " + alarmString, Toast.LENGTH_SHORT).show();
+        manager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+    }
+
+    public void stopAlarm(int pos) {
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(this, AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), pos, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        Toast.makeText(this, "Alarm cancelled!", Toast.LENGTH_SHORT).show();
+        manager.cancel(pendingIntent);
     }
 }
