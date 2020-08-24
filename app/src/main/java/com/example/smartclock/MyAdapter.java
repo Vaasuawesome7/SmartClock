@@ -46,4 +46,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             lap = itemView.findViewById(R.id.lap_item);
         }
     }
+    /*
+    public int getTime(String time) {
+        int minutes = Integer.parseInt(time.substring(0,2));
+        int seconds = Integer.parseInt(time.substring(3));
+        return minutes*60 + seconds;
+    }
+
+    public int getMinTime() {
+        int pos;
+        int min = 0;
+        for (int i = 0; i < mLapTimes.size(); i++) {
+            mLapTimes.get(i);
+        }
+    }
+
+     */
 }
