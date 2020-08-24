@@ -93,11 +93,11 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         adapter.setOnItemClickListener(new AlarmAdapter.OnItemClickListener() {
             @Override
             public void onDeleteClick(int pos) {
+                if (mSwitchStates.get(pos))
+                    stopAlarm(pos);
                 mAlarmList.remove(pos);
                 mSwitchStates.remove(pos);
                 adapter.notifyItemRemoved(pos);
-                if (mSwitchStates.get(pos))
-                    stopAlarm(pos);
                 saveData();
             }
 

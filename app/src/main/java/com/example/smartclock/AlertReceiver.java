@@ -11,6 +11,6 @@ public class AlertReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         MediaPlayer.create(context, R.raw.timer).start();
-        ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(20000);
+        ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(19000);
     }
 }
