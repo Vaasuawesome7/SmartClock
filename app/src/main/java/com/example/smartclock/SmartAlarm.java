@@ -108,13 +108,8 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
     public void addAlarm(View view) {
         DialogFragment timePicker = new TimePickerFragment();
         timePicker.show(getSupportFragmentManager(), "time picker");
-        System.out.println("second");
-        mAlarmList.add(time);
-        System.out.println(time);
-        adapter = new AlarmAdapter(mAlarmList);
-        adapter.notifyDataSetChanged();
-        mAlarmView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mAlarmView.setAdapter(adapter);
+
+
     }
 
     @Override
@@ -125,5 +120,12 @@ public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlar
         if (minute<10)
             time = hourOfDay + ":0" + minute;
         System.out.println("first");
+        System.out.println("second");
+        mAlarmList.add(time);
+        System.out.println(time);
+        adapter = new AlarmAdapter(mAlarmList);
+        adapter.notifyDataSetChanged();
+        mAlarmView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mAlarmView.setAdapter(adapter);
     }
 }
