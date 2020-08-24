@@ -13,6 +13,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     private ArrayList<String> mAlarmList;
 
+    public interface OnAlarmListener{
+        void onAlarmClick(int pos);
+    }
+
     public AlarmAdapter(ArrayList<String> list) {
         this.mAlarmList = list;
     }

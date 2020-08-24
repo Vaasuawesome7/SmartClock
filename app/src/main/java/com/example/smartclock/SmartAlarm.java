@@ -3,7 +3,11 @@ package com.example.smartclock;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
@@ -12,23 +16,34 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
-public class SmartAlarm extends AppCompatActivity {
+public class SmartAlarm extends AppCompatActivity implements AlarmAdapter.OnAlarmListener, TimePickerDialog.OnTimeSetListener {
 
     private SoundPool mSoundPool;
     private int mInteract;
     private ArrayList<String> mAlarmList;
+    private AlarmAdapter adapter;
+    private RecyclerView mAlarmView;
+    private TextView decoy;
+    private String time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_smart_alarm);
+        mAlarmView = findViewById(R.id.alarm_view);
+        time = "";
         fun1();
 
+        decoy = findViewById(R.id.decoy);
         ActionBar actionBar = getSupportActionBar();
         ColorDrawable colorDrawable
                 = new ColorDrawable(getResources().getColor(R.color.colorAlarm));
@@ -85,4 +100,30 @@ public class SmartAlarm extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onAlarmClick(int pos) {
+
+    }
+
+    public void addAlarm(View view) {
+        DialogFragment timePicker = new TimePickerFragment();
+        timePicker.show(getSupportFragmentManager(), "time picker");
+        System.out.println("second");
+        mAlarmList.add(time);
+        System.out.println(time);
+        adapter = new AlarmAdapter(mAlarmList);
+        adapter.notifyDataSetChanged();
+        mAlarmView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mAlarmView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        time = hourOfDay + ":" + minute;
+        if (hourOfDay<10)
+            time = "0" + hourOfDay + ":" + minute;
+        if (minute<10)
+            time = hourOfDay + ":0" + minute;
+        System.out.println("first");
+    }
 }
