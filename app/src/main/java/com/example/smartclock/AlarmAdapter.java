@@ -1,6 +1,7 @@
 package com.example.smartclock;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,18 +19,21 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     private ArrayList<String> mAlarmList;
     private ArrayList<Boolean> mSwitchStates;
     private OnItemClickListener mListener;
+    private Context context;
 
     public interface OnItemClickListener{
         void onDeleteClick(int pos);
+        void onSwitchClick(int pos);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.mListener = listener;
     }
 
-    public AlarmAdapter(ArrayList<String> list, ArrayList<Boolean> switchStates) {
+    public AlarmAdapter(ArrayList<String> list, ArrayList<Boolean> switchStates, Context context) {
         this.mAlarmList = list;
         this.mSwitchStates = switchStates;
+        this.context = context;
     }
 
     @NonNull
@@ -57,8 +61,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         Button delete;
         @SuppressLint("UseSwitchCompatOrMaterialCode")
         Switch alarmOnOff;
-        ArrayList<Boolean> mSwitchStates;
-        ArrayList<String> mAlarmList;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -76,10 +78,25 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                     }
                 }
             });
+
+            alarmOnOff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int pos = getAdapterPosition();
+                        if (pos != RecyclerView.NO_POSITION)
+                            listener.onSwitchClick(pos);
+                    }
+                }
+            });
         }
 
         @Override
         public void onDeleteClick(int pos) {
+        }
+
+        @Override
+        public void onSwitchClick(int pos) {
         }
     }
 }

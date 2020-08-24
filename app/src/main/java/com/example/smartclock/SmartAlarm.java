@@ -7,7 +7,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,7 +18,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -62,8 +60,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         mAlarmList = new ArrayList<>();
         mSwitchStates = new ArrayList<>();
         loadData();
-        Toast.makeText(this, "created", Toast.LENGTH_SHORT).show();
-        adapter = new AlarmAdapter(mAlarmList, mSwitchStates);
+        adapter = new AlarmAdapter(mAlarmList, mSwitchStates, getApplicationContext());
         mAlarmView.setLayoutManager(new LinearLayoutManager(this));
         mAlarmView.setAdapter(adapter);
         adapter.setOnItemClickListener(new AlarmAdapter.OnItemClickListener() {
@@ -72,7 +69,16 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                 mAlarmList.remove(pos);
                 mSwitchStates.remove(pos);
                 adapter.notifyItemRemoved(pos);
-                Toast.makeText(SmartAlarm.this, "setted", Toast.LENGTH_SHORT).show();
+                saveData();
+            }
+
+            @Override
+            public void onSwitchClick(int pos) {
+                mSwitchStates.set(pos, !mSwitchStates.get(pos));
+                for (Boolean bool : mSwitchStates){
+                    System.out.println(bool);
+                }
+                adapter.notifyItemChanged(pos);
                 saveData();
             }
         });
