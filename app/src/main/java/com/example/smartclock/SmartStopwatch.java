@@ -85,11 +85,13 @@ public class SmartStopwatch extends AppCompatActivity {
                     case R.id.timer: {
                         startActivity(new Intent(getApplicationContext(), SmartTimer.class));
                         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                        finish();
                         return true;
                     }
                     case R.id.alarm: {
                         startActivity(new Intent(getApplicationContext(), SmartAlarm.class));
                         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                        finish();
                         return true;
                     }
                     case R.id.stopwatch:
