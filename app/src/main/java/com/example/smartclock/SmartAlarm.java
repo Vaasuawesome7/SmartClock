@@ -42,11 +42,13 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
     private ArrayList<Boolean> mSwitchStates = new ArrayList<>();
     private RecyclerView mAlarmView;
     private ArrayList<Integer> mMusic;
+    private ArrayList<String> mDays;
 
     private final String SHARED_PREFERENCES = "sharedPrefs";
     private final String SHARED_PREF_STRING = "alarm";
     private final String SHARED_PREF_SWITCH = "switch";
     private final String SHARED_PREF_MUSIC = "music";
+    private final String SHARED_PREF_DAYS = "days";
 
 
     @Override
@@ -66,6 +68,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         mAlarmList = new ArrayList<>();
         mSwitchStates = new ArrayList<>();
         mMusic = new ArrayList<>();
+        mDays = new ArrayList<>();
         loadData();
         onClickListeners();
         checkStartingAlarms();
@@ -109,6 +112,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                 mAlarmList.remove(pos);
                 mSwitchStates.remove(pos);
                 mMusic.remove(pos);
+                mDays.remove(pos);
                 adapter.notifyItemRemoved(pos);
                 saveData();
             }
@@ -141,6 +145,11 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                     stopAlarm(pos);
                     startAlarm(pos);
                 }
+            }
+
+            @Override
+            public void onAlarmClick(int pos) {
+
             }
         });
     }
@@ -196,6 +205,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
             mAlarmList.add(time);
             mSwitchStates.add(false);
             mMusic.add(1);
+            mDays.add("" + getDayChar());
             adapter.notifyDataSetChanged();
         }
         saveData();
@@ -209,9 +219,11 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         String json = gson.toJson(mAlarmList);
         String json1 = gson.toJson(mSwitchStates);
         String json2 = gson.toJson(mMusic);
+        String json3 = gson.toJson(mDays);
         editor.putString(SHARED_PREF_STRING, json);
         editor.putString(SHARED_PREF_SWITCH, json1);
         editor.putString(SHARED_PREF_MUSIC, json2);
+        editor.putString(SHARED_PREF_DAYS, json3);
         editor.apply();
     }
 
@@ -221,18 +233,23 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         String json = sharedPreferences.getString(SHARED_PREF_STRING, null);
         String json1 = sharedPreferences.getString(SHARED_PREF_SWITCH, null);
         String json2 = sharedPreferences.getString(SHARED_PREF_MUSIC, null);
+        String json3 = sharedPreferences.getString(SHARED_PREF_DAYS, null);
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
         Type type1 = new TypeToken<ArrayList<Boolean>>() {}.getType();
         Type type2 = new TypeToken<ArrayList<Integer>>() {}.getType();
+        Type type3 = new TypeToken<ArrayList<String>>() {}.getType();
         mAlarmList = gson.fromJson(json, type);
         mSwitchStates = gson.fromJson(json1, type1);
         mMusic = gson.fromJson(json2, type2);
+        mDays = gson.fromJson(json3, type3);
         if (mAlarmList == null)
             mAlarmList = new ArrayList<>();
         if (mSwitchStates == null)
             mSwitchStates = new ArrayList<>();
         if (mMusic == null)
             mMusic = new ArrayList<>();
+        if (mDays == null)
+            mDays = new ArrayList<>();
     }
 
     public void startAlarm(int pos) {
@@ -280,5 +297,29 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
             alarmString =  h + ":0" + m;
         Toast.makeText(this, "Alarm at " + alarmString + " is cancelled", Toast.LENGTH_SHORT).show();
         manager.cancel(pendingIntent);
+    }
+
+    private char getDayChar() {
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+
+        switch (day) {
+            case Calendar.SUNDAY:
+                return 's';
+            case Calendar.MONDAY:
+                return 'M';
+            case Calendar.TUESDAY:
+                return 't';
+            case Calendar.WEDNESDAY:
+                return 'W';
+            case Calendar.THURSDAY:
+                return 'T';
+            case Calendar.FRIDAY:
+                return 'F';
+            case Calendar.SATURDAY:
+                return 'S';
+        }
+
+        return 's';
     }
 }

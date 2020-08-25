@@ -16,12 +16,15 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     private ArrayList<String> mAlarmList;
     private ArrayList<Boolean> mSwitchStates;
     private ArrayList<Integer> mMusic;
+
     private OnItemClickListener mListener;
+
 
     public interface OnItemClickListener{
         void onDeleteClick(int pos);
         void onSwitchClick(int pos);
         void onTextClick(int pos);
+        void onAlarmClick(int pos);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -102,6 +105,17 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                     }
                 }
             });
+
+            alarm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int pos = getAdapterPosition();
+                        if (pos != RecyclerView.NO_POSITION)
+                            listener.onAlarmClick(pos);
+                    }
+                }
+            });
         }
 
         @Override
@@ -114,6 +128,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         @Override
         public void onTextClick(int pos) {
+
+        }
+
+        @Override
+        public void onAlarmClick(int pos) {
 
         }
     }
