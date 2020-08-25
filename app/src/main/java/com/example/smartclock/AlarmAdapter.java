@@ -46,7 +46,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.alarm.setText(mAlarmList.get(position));
         holder.alarmOnOff.setChecked(mSwitchStates.get(position));
-        String text = "Alarm " + mMusic.get(position);
+        String text = "Music " + mMusic.get(position);
         holder.musicID.setText(text);
     }
 

@@ -47,7 +47,6 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
     private final String SHARED_PREF_STRING = "alarm";
     private final String SHARED_PREF_SWITCH = "switch";
     private final String SHARED_PREF_MUSIC = "music";
-    private final int[] MUSIC_NUMBERS = {1, 2, 3, 4, 5};
 
 
     @Override
@@ -58,8 +57,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         time = "";
         fun1();
         ActionBar actionBar = getSupportActionBar();
-        ColorDrawable colorDrawable
-                = new ColorDrawable(getResources().getColor(R.color.colorAlarm));
+        ColorDrawable colorDrawable = new ColorDrawable(getResources().getColor(R.color.colorAlarm));
         assert actionBar != null;
         actionBar.setBackgroundDrawable(colorDrawable);
         actionBar.setTitle("Alarm");
