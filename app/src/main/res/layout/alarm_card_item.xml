@@ -30,15 +30,17 @@
                 android:text="00:00"/>
 
             <Switch
+                android:id="@+id/alarm_on_off"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/alarm_on_off"
-                android:foregroundGravity="center"
-                tools:ignore="UseSwitchCompatOrMaterialXml"
-                android:shadowColor="@android:color/black"
-                android:layout_weight="1"
                 android:layout_gravity="center"
-                android:textColor="@android:color/black"/>
+                android:layout_weight="1"
+                android:foregroundGravity="center"
+                android:shadowColor="@android:color/black"
+                android:textColor="@android:color/black"
+                android:textColorHint="@color/design_default_color_on_secondary"
+                android:textColorLink="@color/colorStopwatch"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
 
             <Button
                 android:id="@+id/delete_alarm"

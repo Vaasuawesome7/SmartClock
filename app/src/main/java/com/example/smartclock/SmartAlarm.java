@@ -66,6 +66,14 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         mSwitchStates = new ArrayList<>();
         loadData();
         onClickListeners();
+        checkStartingAlarms();
+    }
+
+    private void checkStartingAlarms() {
+        for (int i = 0; i < mSwitchStates.size(); i++) {
+            if (mSwitchStates.get(i))
+                startAlarm(i);
+        }
     }
 
     private void setSoundPool() {
@@ -106,7 +114,6 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
             public void onSwitchClick(int pos) {
                 mSoundPool.play(mInteract, 1, 1, 0, 0, 1);
                 mSwitchStates.set(pos, !mSwitchStates.get(pos));
-                adapter.notifyItemChanged(pos);
                 boolean val = mSwitchStates.get(pos);
                 if (val) {
                     startAlarm(pos);
@@ -115,6 +122,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                     stopAlarm(pos);
                     mSwitchStates.set(pos, false);
                 }
+                adapter.notifyItemChanged(pos);
                 saveData();
             }
         });
@@ -166,7 +174,6 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         System.out.println("second");
         mAlarmList.add(time);
         mSwitchStates.add(false);
-        System.out.println(time);
         adapter.notifyDataSetChanged();
         saveData();
     }
@@ -204,13 +211,14 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         String time = mAlarmList.get(pos);
         int h = Integer.parseInt(time.substring(0,2));
         int m = Integer.parseInt(time.substring(3));
+        int key = h*60 + m;
         c.set(Calendar.HOUR_OF_DAY, h);
         c.set(Calendar.MINUTE, m);
         c.set(Calendar.SECOND, 0);
 
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), pos, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), key, i, PendingIntent.FLAG_UPDATE_CURRENT);
         String alarmString = h + ":" + m;
         if (h<10)
             alarmString = "0" + h + ":" + m;
@@ -226,10 +234,19 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
     }
 
     public void stopAlarm(int pos) {
+        String time = mAlarmList.get(pos);
+        int h = Integer.parseInt(time.substring(0,2));
+        int m = Integer.parseInt(time.substring(3));
+        int key = h*60 + m;
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), pos, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        Toast.makeText(this, "Alarm cancelled!", Toast.LENGTH_SHORT).show();
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), key, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        String alarmString = h + ":" + m;
+        if (h<10)
+            alarmString = "0" + h + ":" + m;
+        if (m<10)
+            alarmString =  h + ":0" + m;
+        Toast.makeText(this, "Alarm at " + alarmString + " is cancelled", Toast.LENGTH_SHORT).show();
         manager.cancel(pendingIntent);
     }
 }
