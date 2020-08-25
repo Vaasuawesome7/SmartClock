@@ -182,7 +182,7 @@ public class SmartTimer extends AppCompatActivity {
             public void onFinish() {
                 player = MediaPlayer.create(getApplicationContext(), R.raw.one);
                 player.start();
-                mVibrator.vibrate(11000);
+                mVibrator.vibrate(player.getDuration());
                 resetTimer();
                 isFinished = true;
             }
