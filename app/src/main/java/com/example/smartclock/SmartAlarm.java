@@ -172,9 +172,14 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
             time = hourOfDay + ":0" + minute;
         System.out.println("first");
         System.out.println("second");
-        mAlarmList.add(time);
-        mSwitchStates.add(false);
-        adapter.notifyDataSetChanged();
+        if (mAlarmList.contains(time)) {
+            Toast.makeText(this, "Time already exists!", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            mAlarmList.add(time);
+            mSwitchStates.add(false);
+            adapter.notifyDataSetChanged();
+        }
         saveData();
     }
 
