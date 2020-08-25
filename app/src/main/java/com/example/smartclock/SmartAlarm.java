@@ -93,6 +93,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         adapter.setOnItemClickListener(new AlarmAdapter.OnItemClickListener() {
             @Override
             public void onDeleteClick(int pos) {
+                mSoundPool.play(mInteract, 1, 1, 0, 0, 1);
                 if (mSwitchStates.get(pos))
                     stopAlarm(pos);
                 mAlarmList.remove(pos);
@@ -103,6 +104,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
 
             @Override
             public void onSwitchClick(int pos) {
+                mSoundPool.play(mInteract, 1, 1, 0, 0, 1);
                 mSwitchStates.set(pos, !mSwitchStates.get(pos));
                 adapter.notifyItemChanged(pos);
                 boolean val = mSwitchStates.get(pos);
@@ -148,9 +150,9 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
     }
 
     public void addAlarm(View view) {
+        mSoundPool.play(mInteract, 1, 1, 0, 0, 1);
         DialogFragment timePicker = new TimePickerFragment();
         timePicker.show(getSupportFragmentManager(), "time picker");
-
     }
 
     @Override
