@@ -6,4 +6,5 @@
     <color name="colorTimer">#FFC107</color>
     <color name="colorStopwatch">@android:color/holo_blue_light</color>
     <color name="colorAlarm">@android:color/holo_red_light</color>
+    <color name="startScreenColor">#37EC05</color>
 </resources>

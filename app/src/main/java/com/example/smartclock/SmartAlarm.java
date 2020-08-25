@@ -335,5 +335,6 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
     @Override
     public void applyDays(String newOne, int pos) {
         mDays.set(pos, newOne);
+        saveData();
     }
 }

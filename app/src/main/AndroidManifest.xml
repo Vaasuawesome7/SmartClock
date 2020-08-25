@@ -3,6 +3,7 @@
     package="com.example.smartclock">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,9 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SmartAlarm"></activity>
+        <activity android:name=".SmartTimer"></activity>
+        <activity android:name=".SmartAlarm" />
         <activity android:name=".SmartStopwatch" />
-        <activity android:name=".SmartTimer">
+        <activity android:name=".startScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".AlertReceiver"/>
+        <receiver android:name=".AlertReceiver" />
 
         <meta-data
             android:name="preloaded_fonts"
