@@ -5,7 +5,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -56,7 +55,7 @@ public class SmartTimer extends AppCompatActivity {
 
         mTimerRunning = false;
         isFinished = false;
-        player = MediaPlayer.create(getApplicationContext(), R.raw.timer);
+        player = MediaPlayer.create(getApplicationContext(), R.raw.one);
 
         mHText = findViewById(R.id.timer_hour);
         mMText = findViewById(R.id.timer_minute);
@@ -181,7 +180,7 @@ public class SmartTimer extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                player = MediaPlayer.create(getApplicationContext(), R.raw.timer);
+                player = MediaPlayer.create(getApplicationContext(), R.raw.one);
                 player.start();
                 mVibrator.vibrate(11000);
                 resetTimer();

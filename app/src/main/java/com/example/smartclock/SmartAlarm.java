@@ -41,10 +41,13 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
     private String time;
     private ArrayList<Boolean> mSwitchStates = new ArrayList<>();
     private RecyclerView mAlarmView;
+    private ArrayList<Integer> mMusic;
 
     private final String SHARED_PREFERENCES = "sharedPrefs";
     private final String SHARED_PREF_STRING = "alarm";
     private final String SHARED_PREF_SWITCH = "switch";
+    private final String SHARED_PREF_MUSIC = "music";
+    private final int[] MUSIC_NUMBERS = {1, 2, 3, 4, 5};
 
 
     @Override
@@ -64,6 +67,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         setSoundPool();
         mAlarmList = new ArrayList<>();
         mSwitchStates = new ArrayList<>();
+        mMusic = new ArrayList<>();
         loadData();
         onClickListeners();
         checkStartingAlarms();
@@ -95,7 +99,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
     }
 
     private void onClickListeners() {
-        adapter = new AlarmAdapter(mAlarmList, mSwitchStates);
+        adapter = new AlarmAdapter(mAlarmList, mSwitchStates, mMusic);
         mAlarmView.setLayoutManager(new LinearLayoutManager(this));
         mAlarmView.setAdapter(adapter);
         adapter.setOnItemClickListener(new AlarmAdapter.OnItemClickListener() {
@@ -106,6 +110,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                     stopAlarm(pos);
                 mAlarmList.remove(pos);
                 mSwitchStates.remove(pos);
+                mMusic.remove(pos);
                 adapter.notifyItemRemoved(pos);
                 saveData();
             }
@@ -124,6 +129,13 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                 }
                 adapter.notifyItemChanged(pos);
                 saveData();
+            }
+
+            @Override
+            public void onTextClick(int pos) {
+                int ptr = MUSIC_NUMBERS[(mMusic.get(pos) + 1)%5];
+                mMusic.set(pos, ptr);
+                adapter.notifyDataSetChanged();
             }
         });
     }
@@ -178,6 +190,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         else {
             mAlarmList.add(time);
             mSwitchStates.add(false);
+            mMusic.add(1);
             adapter.notifyDataSetChanged();
         }
         saveData();
@@ -190,8 +203,10 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         Gson gson = new Gson();
         String json = gson.toJson(mAlarmList);
         String json1 = gson.toJson(mSwitchStates);
+        String json2 = gson.toJson(mMusic);
         editor.putString(SHARED_PREF_STRING, json);
         editor.putString(SHARED_PREF_SWITCH, json1);
+        editor.putString(SHARED_PREF_MUSIC, json2);
         editor.apply();
     }
 
@@ -200,14 +215,19 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         Gson gson = new Gson();
         String json = sharedPreferences.getString(SHARED_PREF_STRING, null);
         String json1 = sharedPreferences.getString(SHARED_PREF_SWITCH, null);
+        String json2 = sharedPreferences.getString(SHARED_PREF_MUSIC, null);
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
         Type type1 = new TypeToken<ArrayList<Boolean>>() {}.getType();
+        Type type2 = new TypeToken<ArrayList<Integer>>() {}.getType();
         mAlarmList = gson.fromJson(json, type);
         mSwitchStates = gson.fromJson(json1, type1);
+        mMusic = gson.fromJson(json2, type2);
         if (mAlarmList == null)
             mAlarmList = new ArrayList<>();
         if (mSwitchStates == null)
             mSwitchStates = new ArrayList<>();
+        if (mMusic == null)
+            mMusic = new ArrayList<>();
     }
 
     public void startAlarm(int pos) {
@@ -223,6 +243,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
 
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(this, AlertReceiver.class);
+        i.putExtra("musicID", mMusic.get(pos));
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), key, i, PendingIntent.FLAG_UPDATE_CURRENT);
         String alarmString = h + ":" + m;
         if (h<10)
@@ -245,6 +266,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         int key = h*60 + m;
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(this, AlertReceiver.class);
+        i.putExtra("musicID", mMusic.get(pos));
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), key, i, PendingIntent.FLAG_UPDATE_CURRENT);
         String alarmString = h + ":" + m;
         if (h<10)
