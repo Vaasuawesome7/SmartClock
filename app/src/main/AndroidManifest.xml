@@ -14,7 +14,7 @@
         <activity android:name=".SmartTimer"></activity>
         <activity android:name=".SmartAlarm" />
         <activity android:name=".SmartStopwatch" />
-        <activity android:name=".startScreen">
+        <activity android:name=".StartScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

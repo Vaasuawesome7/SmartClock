@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:onClick="start"
     android:background="#124902"
-    tools:context=".startScreen">
+    tools:context=".StartScreen">
 
     <TextView
         android:id="@+id/smart"
