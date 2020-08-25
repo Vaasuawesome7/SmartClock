@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
-import android.os.Vibrator;
 
 public class AlertReceiver extends BroadcastReceiver {
 
@@ -44,6 +43,5 @@ public class AlertReceiver extends BroadcastReceiver {
                 player1.stop();
             }
         }.start();
-        ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(player.getDuration());
     }
 }

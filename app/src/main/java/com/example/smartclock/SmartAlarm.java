@@ -142,7 +142,6 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                 mMusic.set(pos, ptr);
                 adapter.notifyItemChanged(pos);
                 if (mSwitchStates.get(pos)) {
-                    stopAlarm(pos);
                     startAlarm(pos);
                 }
                 saveData();
@@ -194,13 +193,13 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        time = hourOfDay + ":" + minute;
+        String h = hourOfDay + "";
+        String m = minute + "";
         if (hourOfDay<10)
-            time = "0" + hourOfDay + ":" + minute;
+            h = "0" + h;
         if (minute<10)
-            time = hourOfDay + ":0" + minute;
-        System.out.println("first");
-        System.out.println("second");
+            m = "0" + m;
+        time = h + ":" + m;
         if (mAlarmList.contains(time)) {
             Toast.makeText(this, "Time already exists!", Toast.LENGTH_SHORT).show();
         }
@@ -209,7 +208,6 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
             mSwitchStates.add(false);
             mMusic.add(1);
             mDays.add("" + getDayChar());
-            System.out.println(getDayChar());
             adapter.notifyDataSetChanged();
         }
         saveData();
@@ -258,31 +256,41 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
 
     public void startAlarm(int pos) {
 
-        Calendar c = Calendar.getInstance();
+        ArrayList<Calendar> calendars = new ArrayList<>();
+
+        String days = mDays.get(pos);
+
         String time = mAlarmList.get(pos);
         int h = Integer.parseInt(time.substring(0,2));
         int m = Integer.parseInt(time.substring(3));
         int key = h*60 + m;
-        c.set(Calendar.HOUR_OF_DAY, h);
-        c.set(Calendar.MINUTE, m);
-        c.set(Calendar.SECOND, 0);
+
+        for (int i = 0; i < days.length(); i++) {
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.HOUR_OF_DAY, h);
+            c.set(Calendar.MINUTE, m);
+            c.set(Calendar.SECOND, 0);
+            int num = Integer.parseInt(days.charAt(i) + "");
+            num ++;
+            c.set(Calendar.DAY_OF_WEEK, num);
+            calendars.add(c);
+        }
 
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
         Intent i = new Intent(this, AlertReceiver.class);
         i.putExtra("musicID", mMusic.get(pos));
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), key, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        String alarmString = h + ":" + m;
-        if (h<10)
-            alarmString = "0" + h + ":" + m;
-        if (m<10)
-            alarmString =  h + ":0" + m;
 
-        if (c.before(Calendar.getInstance())) {
-            c.add(Calendar.DATE, 1);
-            Toast.makeText(this, "Alarm will ring tomorrow at " + alarmString, Toast.LENGTH_SHORT).show();
+        for (int j = 0; j < calendars.size(); j++) {
+            Calendar c = calendars.get(j);
+            int num = Integer.parseInt(days.charAt(j) + "");
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), key+1440*num, i, PendingIntent.FLAG_UPDATE_CURRENT);
+            if (c.before(Calendar.getInstance())) {
+                c.add(Calendar.DATE, 7);
+            }
+
+            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 60*60*1000*24*7, pendingIntent);
         }
-        Toast.makeText(this, "Alarm set at " + alarmString, Toast.LENGTH_SHORT).show();
-        manager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
     public void stopAlarm(int pos) {
@@ -290,17 +298,17 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         int h = Integer.parseInt(time.substring(0,2));
         int m = Integer.parseInt(time.substring(3));
         int key = h*60 + m;
+        String days = mDays.get(pos);
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(this, AlertReceiver.class);
         i.putExtra("musicID", mMusic.get(pos));
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), key, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        String alarmString = h + ":" + m;
-        if (h<10)
-            alarmString = "0" + h + ":" + m;
-        if (m<10)
-            alarmString =  h + ":0" + m;
-        Toast.makeText(this, "Alarm at " + alarmString + " is cancelled", Toast.LENGTH_SHORT).show();
-        manager.cancel(pendingIntent);
+
+        for (int j = 0; j < days.length(); j++) {
+            int num = Integer.parseInt(days.charAt(j) + "");
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), key+1440*num, i, PendingIntent.FLAG_UPDATE_CURRENT);
+            manager.cancel(pendingIntent);
+        }
+
     }
 
     private String getDayChar() {
@@ -335,6 +343,8 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
     @Override
     public void applyDays(String newOne, int pos) {
         mDays.set(pos, newOne);
+        if (mSwitchStates.get(pos))
+            startAlarm(pos);
         saveData();
     }
 }
