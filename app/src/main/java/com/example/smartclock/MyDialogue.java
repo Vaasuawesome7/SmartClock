@@ -4,6 +4,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +17,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-import java.util.ArrayList;
-
 public class MyDialogue extends AppCompatDialogFragment {
 
     private CheckBox[] days;
     private String mDays;
     private MyDialogueListener listener;
     private int mPos;
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -51,7 +54,6 @@ public class MyDialogue extends AppCompatDialogFragment {
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                     }
                 })
                 .setPositiveButton("confirm", new DialogInterface.OnClickListener() {
