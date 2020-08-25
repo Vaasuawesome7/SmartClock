@@ -134,7 +134,9 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
             @Override
             public void onTextClick(int pos) {
                 mSoundPool.play(mInteract, 1, 1, 0, 0, 1);
-                int ptr = MUSIC_NUMBERS[(mMusic.get(pos) + 1)%5 - 1];
+                int ptr = mMusic.get(pos) + 1;
+                if (ptr == 6)
+                    ptr = 1;
                 mMusic.set(pos, ptr);
                 adapter.notifyItemChanged(pos);
                 if (mSwitchStates.get(pos)) {
