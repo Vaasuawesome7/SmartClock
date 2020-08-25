@@ -32,7 +32,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
+public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, MyDialogue.MyDialogueListener {
 
     private SoundPool mSoundPool;
     private int mInteract;
@@ -145,11 +145,14 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
                     stopAlarm(pos);
                     startAlarm(pos);
                 }
+                saveData();
             }
 
             @Override
             public void onAlarmClick(int pos) {
-
+                mSoundPool.play(mInteract, 1, 1, 0, 0, 1);
+                openDialogue(pos);
+                saveData();
             }
         });
     }
@@ -206,6 +209,7 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
             mSwitchStates.add(false);
             mMusic.add(1);
             mDays.add("" + getDayChar());
+            System.out.println(getDayChar());
             adapter.notifyDataSetChanged();
         }
         saveData();
@@ -299,27 +303,37 @@ public class SmartAlarm extends AppCompatActivity implements TimePickerDialog.On
         manager.cancel(pendingIntent);
     }
 
-    private char getDayChar() {
+    private String getDayChar() {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_WEEK);
 
         switch (day) {
-            case Calendar.SUNDAY:
-                return 's';
             case Calendar.MONDAY:
-                return 'M';
+                return "1";
             case Calendar.TUESDAY:
-                return 't';
+                return "2";
             case Calendar.WEDNESDAY:
-                return 'W';
+                return "3";
             case Calendar.THURSDAY:
-                return 'T';
+                return "4";
             case Calendar.FRIDAY:
-                return 'F';
+                return "5";
             case Calendar.SATURDAY:
-                return 'S';
+                return "6";
+            case Calendar.SUNDAY:
+                return "7";
         }
 
-        return 's';
+        return "1";
+    }
+
+    public void openDialogue(int pos) {
+        MyDialogue dialogue = new MyDialogue(mDays.get(pos), pos);
+        dialogue.show(getSupportFragmentManager(), "example dialogue");
+    }
+
+    @Override
+    public void applyDays(String newOne, int pos) {
+        mDays.set(pos, newOne);
     }
 }
